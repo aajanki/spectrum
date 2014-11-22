@@ -338,3 +338,28 @@ RNG_NoXOR	ld (RandomSeed),a
 
 RNG_Table	db $1d,$2b,$2d,$4d,$5f,$63,$65,$69
 	db $71,$87,$8d,$a9,$c3,$cf,$e7,$f5
+
+DissolveScreen	push hl
+	ld b,0
+DS_Idx	defl 0
+DS_Loop	rept 3
+	call RandomByte
+	ld d,DS_Idx
+	ld e,a
+	pop hl
+	push hl
+	add hl,de
+	ld a,(hl)
+	ld hl,(ColorAddress)
+	add hl,de
+	ld (hl),a
+	push bc
+	ld b,128
+	djnz $
+	pop bc
+DS_Idx	defl DS_Idx+1
+	endm
+	djnz DS_Loop
+	jr nz,DS_Loop
+	pop hl
+	ret
